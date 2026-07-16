@@ -1,0 +1,13 @@
+{
+  "name": "khasahi-ai",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "mobile",
+    "shared"
+  ],
+  "scripts": {
+    "typecheck:mobile": "npm --workspace mobile run typecheck",
+    "lint:mobile": "npm --workspace mobile run lint"
+  }
+}

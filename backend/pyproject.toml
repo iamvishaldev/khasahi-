@@ -1,0 +1,18 @@
+[project]
+name = "khasahi-backend"
+version = "0.1.0"
+description = "FastAPI backend foundation for Khasahi AI"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0,<1.0.0",
+  "httpx>=0.27.0,<1.0.0",
+  "openai>=1.40.0,<2.0.0",
+  "pydantic-settings>=2.4.0,<3.0.0",
+  "python-dotenv>=1.0.1,<2.0.0",
+  "supabase>=2.6.0,<3.0.0",
+  "uvicorn[standard]>=0.30.6,<1.0.0"
+]
+
+[tool.uv]
+package = false
+
