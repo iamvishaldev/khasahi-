@@ -13,7 +13,7 @@
 
 | Screen | Purpose | Key Elements |
 | --- | --- | --- |
-| Onboarding | Collect value context and permissions | Benefit framing, dietary setup, permission education |
+| Onboarding | Collect value context and permissions | Benefit framing, dietary setup, permission education. Figma reference: see [Design-System.md](../02-design/Design-System.md#design-references) |
 | Auth | Create and restore user identity | Email or phone auth, session recovery |
 | Home | Launch point for scans and history | Scan CTA, recent scans, profile shortcuts |
 | Scanner | Barcode and OCR capture workflows | Camera frame, mode switcher, feedback states |

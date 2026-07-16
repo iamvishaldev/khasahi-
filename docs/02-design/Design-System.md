@@ -1,5 +1,11 @@
 # Design System
 
+## Design References
+
+| Source | Scope | Link |
+| --- | --- | --- |
+| Figma (AI) | Premium Onboarding Experience | https://www.figma.com/make/LGeS55zJlGOpjoCebPhvhm/Premium-Onboarding-Experience |
+
 ## Design Direction
 The visual system for Khasahi AI should communicate clarity, intelligence, and calm decisiveness. The product category invites anxiety, so the interface must feel trustworthy rather than overly playful.
 
