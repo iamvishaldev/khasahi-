@@ -1,9 +1,17 @@
 import React, {PropsWithChildren} from 'react';
-import {StyleProp, StyleSheet, Text, TextStyle} from 'react-native';
+import {StyleProp, Text, TextStyle} from 'react-native';
 import {useAppTheme} from '@/theme/useAppTheme';
 
 type AppTextProps = PropsWithChildren<{
-  variant?: 'display' | 'title' | 'heading' | 'body' | 'caption';
+  variant?:
+    | 'display'
+    | 'title'
+    | 'heading'
+    | 'body'
+    | 'caption'
+    | 'label'
+    | 'button'
+    | 'wordmark';
   color?: 'primary' | 'secondary' | 'inverse';
   style?: StyleProp<TextStyle>;
 }>;
@@ -19,21 +27,11 @@ export function AppText({
   return (
     <Text
       style={[
-        styles.base,
-        {
-          fontSize: theme.typography[variant],
-          color: theme.colors.text[color],
-        },
+        theme.typography[variant],
+        {color: theme.colors.text[color]},
         style,
       ]}>
       {children}
     </Text>
   );
 }
-
-const styles = StyleSheet.create({
-  base: {
-    fontWeight: '500',
-  },
-});
-

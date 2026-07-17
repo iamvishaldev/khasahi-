@@ -1,0 +1,37 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/Onest-Bold.ttf",
+      "sha1": "6a369b0d1c4bdff7981abb285f666007938facf2"
+    },
+    {
+      "path": "assets/fonts/Onest-Medium.ttf",
+      "sha1": "2fbd517e8ce8aafba8a80755ab65c90ad43f893e"
+    },
+    {
+      "path": "assets/fonts/Onest-Regular.ttf",
+      "sha1": "1eb80619962f01b27d2cfd0612a84e89aab194ef"
+    },
+    {
+      "path": "assets/fonts/Onest-SemiBold.ttf",
+      "sha1": "481bcf347dbce39f960a650c1ffdf35583ebbfc7"
+    },
+    {
+      "path": "assets/fonts/PlusJakartaSans-Bold.ttf",
+      "sha1": "2489b785602d3b59208387abd92901486a7f1814"
+    },
+    {
+      "path": "assets/fonts/PlusJakartaSans-Medium.ttf",
+      "sha1": "642ca7cc91e26aae923fc0e6985c490d75c8512f"
+    },
+    {
+      "path": "assets/fonts/PlusJakartaSans-Regular.ttf",
+      "sha1": "66c55a2b6a7eaa59a1c9e11bc83294975fd56c81"
+    },
+    {
+      "path": "assets/fonts/PlusJakartaSans-SemiBold.ttf",
+      "sha1": "39841f3979d03c1edf35db54be05a050e6d55f00"
+    }
+  ]
+}

@@ -1,28 +1,36 @@
 export const colors = {
   background: {
-    primary: '#F5F7F4',
+    primary: '#FAFAF8',
     secondary: '#FFFFFF',
   },
   surface: {
     primary: '#FFFFFF',
-    subtle: '#EEF3EE',
+    subtle: '#EAF7F1',
   },
   text: {
-    primary: '#152018',
-    secondary: '#4E5C50',
+    primary: '#0A0F0D',
+    secondary: '#5B6B63',
     inverse: '#FFFFFF',
   },
   border: {
-    subtle: '#D7E0D8',
+    subtle: '#E4E7E2',
   },
   accent: {
-    primary: '#264D3B',
-    secondary: '#5F8A72',
+    primary: '#10B981',
+    secondary: '#14B8A6',
   },
   feedback: {
-    success: '#2F7D4B',
-    warning: '#C3871E',
-    danger: '#B5493A',
+    success: '#10B981',
+    warning: '#F59E0B',
+    danger: '#EF4444',
+  },
+  brand: {
+    emerald: '#10B981',
+    teal: '#14B8A6',
+    amber: '#F59E0B',
+    coral: '#EF4444',
+    ink: '#0A0F0D',
+    warmWhite: '#FAFAF8',
   },
 } as const;
 
@@ -43,16 +51,19 @@ export const radii = {
 } as const;
 
 export const typography = {
-  display: 32,
-  title: 24,
-  heading: 18,
-  body: 16,
-  caption: 13,
+  display: {fontSize: 32, lineHeight: 38, fontFamily: 'Onest-Bold'},
+  title: {fontSize: 24, lineHeight: 30, fontFamily: 'Onest-SemiBold'},
+  heading: {fontSize: 18, lineHeight: 24, fontFamily: 'Onest-Medium'},
+  body: {fontSize: 16, lineHeight: 22, fontFamily: 'PlusJakartaSans-Regular'},
+  caption: {fontSize: 13, lineHeight: 18, fontFamily: 'PlusJakartaSans-Regular'},
+  label: {fontSize: 14, lineHeight: 18, fontFamily: 'PlusJakartaSans-Medium'},
+  button: {fontSize: 16, lineHeight: 20, fontFamily: 'PlusJakartaSans-SemiBold'},
+  wordmark: {fontSize: 20, lineHeight: 24, fontFamily: 'Onest-Bold'},
 } as const;
 
 export const shadows = {
   card: {
-    shadowColor: '#152018',
+    shadowColor: '#0A0F0D',
     shadowOffset: {width: 0, height: 8},
     shadowOpacity: 0.08,
     shadowRadius: 18,
@@ -69,4 +80,3 @@ export const theme = {
 } as const;
 
 export type AppTheme = typeof theme;
-

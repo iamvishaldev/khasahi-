@@ -34,7 +34,7 @@ export function PrimaryButton({
         },
       ]}>
       <View>
-        <AppText color="inverse" style={styles.label}>
+        <AppText color="inverse" variant="button">
           {label}
         </AppText>
       </View>
@@ -47,8 +47,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  label: {
-    fontWeight: '700',
-  },
 });
-

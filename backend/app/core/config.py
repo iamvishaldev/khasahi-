@@ -2,7 +2,7 @@ from functools import lru_cache
 
 from pydantic import BeforeValidator
 from pydantic import Field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 from typing import Annotated
 
 
@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     openai_model: str = Field(default="gpt-5-mini", alias="OPENAI_MODEL")
     cors_origins: Annotated[
         list[str],
+        NoDecode,
         BeforeValidator(parse_cors_origins),
     ] = Field(default_factory=list, alias="CORS_ORIGINS")
 
