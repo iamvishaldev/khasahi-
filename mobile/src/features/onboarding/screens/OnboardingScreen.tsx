@@ -66,7 +66,7 @@ export function OnboardingScreen(): React.JSX.Element | null {
     }
 
     setSubmissionStatus('pendingAuth');
-    navigation.navigate('SignIn');
+    navigation.navigate('AuthWelcome');
   }
 
   switch (currentStepId) {

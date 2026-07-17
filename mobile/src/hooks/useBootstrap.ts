@@ -6,6 +6,10 @@ export function useBootstrap(): void {
   const setSession = useSessionStore(state => state.setSession);
 
   useEffect(() => {
+    if (!supabase) {
+      return undefined;
+    }
+
     supabase.auth.getSession().then(({data}) => {
       if (!data.session) {
         return;

@@ -29,8 +29,8 @@ export function PrimaryButton({
             : theme.colors.accent.primary,
           opacity: pressed ? 0.92 : 1,
           borderRadius: theme.radii.pill,
-          paddingVertical: theme.spacing.md,
-          paddingHorizontal: theme.spacing.xl,
+          paddingVertical: theme.spacing.sm + 2,
+          paddingHorizontal: theme.spacing.lg,
         },
       ]}>
       <View>

@@ -43,7 +43,7 @@ export function DietaryPreferencesStep({
           onPress={onNext}
         />
       }>
-      <AppText variant="title">Tell us about your diet.</AppText>
+      <AppText variant="display">Tell us about your diet.</AppText>
       <AppText variant="body" color="secondary">
         AI flags ingredients that conflict with your dietary choices.
       </AppText>

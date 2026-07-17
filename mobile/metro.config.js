@@ -1,10 +1,18 @@
+const path = require('path');
 const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 
-const defaultConfig = getDefaultConfig(__dirname);
+const projectRoot = __dirname;
+const monorepoRoot = path.resolve(projectRoot, '..');
+
+const defaultConfig = getDefaultConfig(projectRoot);
 
 module.exports = mergeConfig(defaultConfig, {
-  watchFolders: [require('path').resolve(__dirname, '../shared')],
+  watchFolders: [monorepoRoot],
   resolver: {
     sourceExts: [...defaultConfig.resolver.sourceExts, 'cjs'],
+    nodeModulesPaths: [
+      path.resolve(projectRoot, 'node_modules'),
+      path.resolve(monorepoRoot, 'node_modules'),
+    ],
   },
 });

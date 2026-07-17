@@ -39,7 +39,7 @@ export function HealthGoalsStep({
           onPress={onNext}
         />
       }>
-      <AppText variant="title">What are your health goals?</AppText>
+      <AppText variant="display">What are your health goals?</AppText>
       <AppText variant="body" color="secondary">
         Select all that apply.
       </AppText>

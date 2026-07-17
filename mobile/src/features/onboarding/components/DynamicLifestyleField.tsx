@@ -32,7 +32,6 @@ export function DynamicLifestyleField({
         (field.options ?? []).map(option => (
           <SelectableCard
             key={option.id}
-            icon="•"
             title={option.label}
             subtitle=""
             selected={value === option.id}

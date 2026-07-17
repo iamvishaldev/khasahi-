@@ -1,5 +1,3 @@
-import Config from 'react-native-config';
-
 type MobileEnv = {
   APP_ENV: string;
   API_BASE_URL: string;
@@ -7,11 +5,23 @@ type MobileEnv = {
   SUPABASE_ANON_KEY: string;
 };
 
+function loadNativeConfig(): Partial<MobileEnv> {
+  try {
+    return require('react-native-config').default ?? {};
+  } catch {
+    console.warn('react-native-config native module unavailable');
+    return {};
+  }
+}
+
+const Config = loadNativeConfig();
+
 function getEnv(name: keyof MobileEnv): string {
   const value = Config[name];
 
   if (!value) {
-    throw new Error(`Missing environment variable: ${name}`);
+    console.warn(`Missing environment variable: ${name}`);
+    return '';
   }
 
   return value;
@@ -23,4 +33,3 @@ export const env: MobileEnv = {
   SUPABASE_URL: getEnv('SUPABASE_URL'),
   SUPABASE_ANON_KEY: getEnv('SUPABASE_ANON_KEY'),
 };
-

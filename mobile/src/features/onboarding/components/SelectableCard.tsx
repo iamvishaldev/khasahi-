@@ -4,7 +4,7 @@ import {AppText} from '@/components/typography/AppText';
 import {useAppTheme} from '@/theme/useAppTheme';
 
 type SelectableCardProps = {
-  icon: string;
+  icon?: string;
   title: string;
   subtitle: string;
   selected: boolean;
@@ -39,16 +39,18 @@ export function SelectableCard({
           gap: theme.spacing.md,
         },
       ]}>
-      <View
-        style={[
-          styles.iconWrap,
-          {
-            backgroundColor: theme.colors.surface.subtle,
-            borderRadius: theme.radii.sm,
-          },
-        ]}>
-        <AppText variant="heading">{icon}</AppText>
-      </View>
+      {icon ? (
+        <View
+          style={[
+            styles.iconWrap,
+            {
+              backgroundColor: theme.colors.surface.subtle,
+              borderRadius: theme.radii.sm,
+            },
+          ]}>
+          <AppText variant="heading">{icon}</AppText>
+        </View>
+      ) : null}
       <View style={styles.textWrap}>
         <AppText variant="heading">{title}</AppText>
         <AppText variant="caption" color="secondary">

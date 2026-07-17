@@ -53,7 +53,7 @@ export function ProfileReadyStep({
         <AppText variant="title">K</AppText>
       </View>
       <PillBadge label="PROFILE READY" />
-      <AppText variant="title">Your AI Profile is Live.</AppText>
+      <AppText variant="display">Your AI Profile is Live.</AppText>
       <AppText variant="body" color="secondary">
         Khasahi AI is calibrated to your goals. Every scan now delivers
         personalized intelligence — not generic nutrition data.

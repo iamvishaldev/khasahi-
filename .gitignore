@@ -8,6 +8,7 @@ pnpm-lock.yaml
 # React Native
 mobile/android/.gradle/
 mobile/android/app/build/
+mobile/android/app/.cxx/
 mobile/android/build/
 mobile/ios/build/
 mobile/ios/Pods/

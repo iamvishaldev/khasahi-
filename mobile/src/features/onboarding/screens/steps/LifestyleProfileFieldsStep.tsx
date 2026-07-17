@@ -67,7 +67,7 @@ export function LifestyleProfileFieldsStep({
         title={`${profile.label} Nutrition`}
         description={profile.description}
       />
-      <AppText variant="title">Your {profile.label.toLowerCase()} details</AppText>
+      <AppText variant="display">Your {profile.label} Details</AppText>
       <AppText variant="body" color="secondary">
         Calibrates daily calorie and micronutrient targets.
       </AppText>

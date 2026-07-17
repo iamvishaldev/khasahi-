@@ -27,7 +27,7 @@ export function AIPersonalizationIntroStep({
       }
       footer={<PrimaryButton label="Continue" onPress={onNext} />}>
       <PillBadge label="AI PERSONALIZATION" />
-      <AppText variant="title">Let's build your nutrition profile.</AppText>
+      <AppText variant="display">Let's build your nutrition profile.</AppText>
       <AppText variant="body" color="secondary">
         3 quick questions. Your answers train the AI to give you
         hyper-relevant food insights — not generic advice.
@@ -36,6 +36,7 @@ export function AIPersonalizationIntroStep({
         <FeatureListItem
           key={feature.id}
           icon={feature.icon}
+          tint={feature.tint}
           title={feature.title}
           description={feature.description}
         />

@@ -40,7 +40,7 @@ export function LifestyleSelectionStep({
           onPress={onNext}
         />
       }>
-      <AppText variant="title">Which lifestyle fits you best?</AppText>
+      <AppText variant="display">Which lifestyle fits you best?</AppText>
       <AppText variant="body" color="secondary">
         Select one — shapes your entire AI profile.
       </AppText>

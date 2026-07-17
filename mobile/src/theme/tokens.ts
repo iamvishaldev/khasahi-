@@ -32,6 +32,20 @@ export const colors = {
     ink: '#0A0F0D',
     warmWhite: '#FAFAF8',
   },
+  scanner: {
+    background: '#050807',
+    glassSurface: 'rgba(255,255,255,0.10)',
+    glassSurfaceActive: 'rgba(255,255,255,0.16)',
+    glassBorder: 'rgba(255,255,255,0.18)',
+    vignette: 'rgba(3,8,6,0.55)',
+    textSecondary: 'rgba(255,255,255,0.72)',
+  },
+  scoreBand: {
+    excellent: '#10B981',
+    good: '#65C87A',
+    moderate: '#F59E0B',
+    needsImprovement: '#EF4444',
+  },
 } as const;
 
 export const spacing = {

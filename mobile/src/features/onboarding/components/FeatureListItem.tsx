@@ -6,12 +6,14 @@ import {useAppTheme} from '@/theme/useAppTheme';
 
 type FeatureListItemProps = {
   icon: string;
+  tint: string;
   title: string;
   description: string;
 };
 
 export function FeatureListItem({
   icon,
+  tint,
   title,
   description,
 }: FeatureListItemProps): React.JSX.Element {
@@ -20,7 +22,13 @@ export function FeatureListItem({
   return (
     <InfoCard>
       <View style={[styles.row, {gap: theme.spacing.md}]}>
-        <AppText variant="heading">{icon}</AppText>
+        <View
+          style={[
+            styles.iconBadge,
+            {backgroundColor: tint, borderRadius: theme.radii.md},
+          ]}>
+          <AppText variant="heading">{icon}</AppText>
+        </View>
         <View style={styles.textWrap}>
           <AppText variant="heading">{title}</AppText>
           <AppText variant="caption" color="secondary">
@@ -36,6 +44,12 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+  },
+  iconBadge: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   textWrap: {
     flex: 1,
