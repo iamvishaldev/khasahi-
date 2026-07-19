@@ -10,6 +10,7 @@ import {ScreenContainer} from '@/components/layout/ScreenContainer';
 import {TextField} from '@/components/inputs/TextField';
 import {useAppTheme} from '@/theme/useAppTheme';
 import {supabase} from '@/services/supabase/client';
+import {signInWithGoogle} from '@/services/auth/googleAuth';
 import {
   CreateAccountFormValues,
   createAccountSchema,
@@ -28,7 +29,9 @@ export function CreateAccountScreen(): React.JSX.Element {
   const theme = useAppTheme();
   const navigation = useNavigation<CreateAccountNavigationProp>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [confirmationEmail, setConfirmationEmail] = useState<string | null>(null);
 
   const {
     control,
@@ -47,7 +50,7 @@ export function CreateAccountScreen(): React.JSX.Element {
 
     setAuthError(null);
     setIsSubmitting(true);
-    const {error} = await supabase.auth.signUp({
+    const {data, error} = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
       options: {data: {full_name: values.name}},
@@ -56,14 +59,24 @@ export function CreateAccountScreen(): React.JSX.Element {
 
     if (error) {
       setAuthError(error.message);
+      return;
+    }
+
+    if (!data.session) {
+      setConfirmationEmail(values.email);
     }
   }
 
   async function handleGoogleSignUp() {
-    if (!supabase) {
-      return;
+    setAuthError(null);
+    setIsGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Google sign up failed.');
+    } finally {
+      setIsGoogleLoading(false);
     }
-    await supabase.auth.signInWithOAuth({provider: 'google'});
   }
 
   return (
@@ -176,6 +189,18 @@ export function CreateAccountScreen(): React.JSX.Element {
         </View>
       ) : null}
 
+      {confirmationEmail ? (
+        <View
+          style={[
+            styles.errorBanner,
+            {backgroundColor: theme.colors.surface.subtle, borderRadius: theme.radii.sm, padding: theme.spacing.md, borderColor: theme.colors.accent.primary},
+          ]}>
+          <AppText variant="caption" color="secondary">
+            Check {confirmationEmail} to confirm your account, then sign in.
+          </AppText>
+        </View>
+      ) : null}
+
       <View style={{gap: theme.spacing.lg}}>
         {isSubmitting ? (
           <View
@@ -199,6 +224,7 @@ export function CreateAccountScreen(): React.JSX.Element {
           variant="outline"
           label="Sign up with Google"
           onPress={handleGoogleSignUp}
+          isLoading={isGoogleLoading}
         />
       </View>
 

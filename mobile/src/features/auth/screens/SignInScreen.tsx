@@ -10,6 +10,7 @@ import {ScreenContainer} from '@/components/layout/ScreenContainer';
 import {TextField} from '@/components/inputs/TextField';
 import {useAppTheme} from '@/theme/useAppTheme';
 import {supabase} from '@/services/supabase/client';
+import {signInWithGoogle} from '@/services/auth/googleAuth';
 import {SignInFormValues, signInSchema} from '@/services/forms/resolvers';
 import {GoogleButton} from '../components/GoogleButton';
 import {AuthDivider} from '../components/AuthDivider';
@@ -25,6 +26,7 @@ export function SignInScreen(): React.JSX.Element {
   const theme = useAppTheme();
   const navigation = useNavigation<SignInNavigationProp>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
   const {
@@ -53,10 +55,15 @@ export function SignInScreen(): React.JSX.Element {
   }
 
   async function handleGoogleSignIn() {
-    if (!supabase) {
-      return;
+    setAuthError(null);
+    setIsGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Google sign in failed.');
+    } finally {
+      setIsGoogleLoading(false);
     }
-    await supabase.auth.signInWithOAuth({provider: 'google'});
   }
 
   return (
@@ -163,7 +170,11 @@ export function SignInScreen(): React.JSX.Element {
 
         <AuthDivider />
 
-        <GoogleButton variant="outline" onPress={handleGoogleSignIn} />
+        <GoogleButton
+          variant="outline"
+          onPress={handleGoogleSignIn}
+          isLoading={isGoogleLoading}
+        />
       </View>
 
       <AuthFooterLink

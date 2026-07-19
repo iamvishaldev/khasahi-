@@ -9,6 +9,7 @@ export type AuthStackParamList = {
   SignIn: undefined;
   CreateAccount: undefined;
   ForgotPassword: undefined;
+  ResetPassword: undefined;
 };
 
 export type AppStackParamList = {
@@ -20,4 +21,3 @@ export type AppStackParamList = {
   History: undefined;
   Profile: undefined;
 };
-

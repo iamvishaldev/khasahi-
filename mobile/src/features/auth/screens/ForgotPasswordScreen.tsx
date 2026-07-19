@@ -10,6 +10,7 @@ import {ScreenContainer} from '@/components/layout/ScreenContainer';
 import {TextField} from '@/components/inputs/TextField';
 import {useAppTheme} from '@/theme/useAppTheme';
 import {supabase} from '@/services/supabase/client';
+import {GOOGLE_AUTH_REDIRECT_URL} from '@/services/auth/googleAuth';
 import {
   ForgotPasswordFormValues,
   forgotPasswordSchema,
@@ -45,7 +46,9 @@ export function ForgotPasswordScreen(): React.JSX.Element {
 
     setAuthError(null);
     setIsSubmitting(true);
-    const {error} = await supabase.auth.resetPasswordForEmail(values.email);
+    const {error} = await supabase.auth.resetPasswordForEmail(values.email, {
+      redirectTo: GOOGLE_AUTH_REDIRECT_URL,
+    });
     setIsSubmitting(false);
 
     if (error) {

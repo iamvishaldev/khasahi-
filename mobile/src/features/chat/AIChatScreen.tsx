@@ -11,6 +11,7 @@ import {UserMessage} from './components/UserMessage';
 import {LoadingBubble} from './components/LoadingBubble';
 import {EmptyConversation} from './components/EmptyConversation';
 import {ChatInput} from './components/ChatInput';
+import {AIContextBanner} from './components/AIContextBanner';
 import {useChatContext} from './hooks/useChatContext';
 import {useChatConversation} from './hooks/useChatConversation';
 import {SUGGESTED_QUESTIONS} from './services/chatService';
@@ -58,6 +59,13 @@ export function AIChatScreen(): React.JSX.Element {
           ]}>
           <ChatHeader onBack={() => navigation.goBack()} />
         </View>
+
+        {context ? (
+          <View
+            style={[styles.contextWrap, {paddingHorizontal: theme.spacing.xl}]}>
+            <AIContextBanner context={context} />
+          </View>
+        ) : null}
 
         {messages.length === 0 ? (
           <View style={[styles.emptyWrap, {padding: theme.spacing.xl}]}>
@@ -110,6 +118,10 @@ const styles = StyleSheet.create({
   emptyWrap: {
     flex: 1,
     justifyContent: 'center',
+  },
+  contextWrap: {
+    width: '100%',
+    marginTop: 12,
   },
   listContent: {
     flexGrow: 1,

@@ -1,9 +1,13 @@
 import {useEffect} from 'react';
+import {Linking} from 'react-native';
 import {useSessionStore} from '@/store/session.store';
 import {supabase} from '@/services/supabase/client';
+import {completeGoogleSignIn} from '@/services/auth/googleAuth';
 
 export function useBootstrap(): void {
   const setSession = useSessionStore(state => state.setSession);
+  const setSessionLoaded = useSessionStore(state => state.setSessionLoaded);
+  const setPasswordRecovery = useSessionStore(state => state.setPasswordRecovery);
 
   useEffect(() => {
     if (!supabase) {
@@ -12,6 +16,7 @@ export function useBootstrap(): void {
 
     supabase.auth.getSession().then(({data}) => {
       if (!data.session) {
+        setSessionLoaded();
         return;
       }
 
@@ -23,6 +28,24 @@ export function useBootstrap(): void {
           email: data.session.user.email ?? '',
         },
       });
+      setSessionLoaded();
+    }).catch(() => {
+      setSessionLoaded();
+    });
+
+    const handleOAuthCallback = (url: string) => {
+      completeGoogleSignIn(url)
+        .then(result => setPasswordRecovery(result === 'recovery'))
+        .catch(error => console.warn('Unable to complete authentication callback', error));
+    };
+
+    Linking.getInitialURL().then(url => {
+      if (url) {
+        handleOAuthCallback(url);
+      }
+    });
+    const linkingSubscription = Linking.addEventListener('url', ({url}) => {
+      handleOAuthCallback(url);
     });
 
     const authSubscription = supabase.auth.onAuthStateChange((_, session) => {
@@ -43,6 +66,7 @@ export function useBootstrap(): void {
 
     return () => {
       authSubscription.data.subscription.unsubscribe();
+      linkingSubscription.remove();
     };
-  }, [setSession]);
+  }, [setPasswordRecovery, setSession, setSessionLoaded]);
 }

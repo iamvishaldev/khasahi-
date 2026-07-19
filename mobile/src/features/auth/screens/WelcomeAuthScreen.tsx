@@ -1,11 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {AppText} from '@/components/typography/AppText';
 import {ScreenContainer} from '@/components/layout/ScreenContainer';
 import {useAppTheme} from '@/theme/useAppTheme';
-import {supabase} from '@/services/supabase/client';
+import {signInWithGoogle} from '@/services/auth/googleAuth';
 import {GoogleButton} from '../components/GoogleButton';
 import {ScanIllustration} from '../components/ScanIllustration';
 import {AuthStackParamList} from '@/types/navigation';
@@ -18,12 +18,19 @@ type WelcomeAuthNavigationProp = NativeStackNavigationProp<
 export function WelcomeAuthScreen(): React.JSX.Element {
   const theme = useAppTheme();
   const navigation = useNavigation<WelcomeAuthNavigationProp>();
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   async function handleGoogleSignIn() {
-    if (!supabase) {
-      return;
+    setAuthError(null);
+    setIsGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Google sign in failed.');
+    } finally {
+      setIsGoogleLoading(false);
     }
-    await supabase.auth.signInWithOAuth({provider: 'google'});
   }
 
   return (
@@ -68,7 +75,11 @@ export function WelcomeAuthScreen(): React.JSX.Element {
       </View>
 
       <View style={[styles.ctaGroup, {gap: theme.spacing.md}]}>
-        <GoogleButton variant="primary" onPress={handleGoogleSignIn} />
+        <GoogleButton
+          variant="primary"
+          onPress={handleGoogleSignIn}
+          isLoading={isGoogleLoading}
+        />
         <Pressable
           accessibilityRole="button"
           onPress={() => navigation.navigate('SignIn')}
@@ -78,6 +89,14 @@ export function WelcomeAuthScreen(): React.JSX.Element {
           </AppText>
         </Pressable>
       </View>
+
+      {authError ? (
+        <AppText
+          variant="caption"
+          style={{color: theme.colors.feedback.danger, textAlign: 'center'}}>
+          {authError}
+        </AppText>
+      ) : null}
 
       <View
         style={[

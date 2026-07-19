@@ -11,18 +11,20 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootNavigator(): React.JSX.Element | null {
   const isAuthenticated = useSessionStore(state => state.isAuthenticated);
+  const isSessionLoaded = useSessionStore(state => state.isSessionLoaded);
+  const isPasswordRecovery = useSessionStore(state => state.isPasswordRecovery);
   const hasCompletedOnboarding = useAppStore(
     state => state.hasCompletedOnboarding,
   );
   const hasHydrated = useHasHydrated(useAppStore.persist);
 
-  if (!hasHydrated) {
+  if (!hasHydrated || !isSessionLoaded) {
     return null;
   }
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      {isAuthenticated && hasCompletedOnboarding ? (
+      {isAuthenticated && hasCompletedOnboarding && !isPasswordRecovery ? (
         <Stack.Screen name="App" component={AppStack} />
       ) : (
         <Stack.Screen name="Auth" component={AuthStack} />

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, Pressable, StyleSheet, View} from 'react-native';
 import {AppText} from '@/components/typography/AppText';
 import {useAppTheme} from '@/theme/useAppTheme';
 
@@ -7,12 +7,14 @@ type GoogleButtonProps = {
   label?: string;
   variant?: 'primary' | 'outline';
   onPress: () => void;
+  isLoading?: boolean;
 };
 
 export function GoogleButton({
   label = 'Continue with Google',
   variant = 'outline',
   onPress,
+  isLoading = false,
 }: GoogleButtonProps): React.JSX.Element {
   const theme = useAppTheme();
   const isPrimary = variant === 'primary';
@@ -20,6 +22,8 @@ export function GoogleButton({
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityState={{disabled: isLoading}}
+      disabled={isLoading}
       onPress={onPress}
       style={({pressed}) => [
         styles.button,
@@ -33,7 +37,7 @@ export function GoogleButton({
           paddingVertical: theme.spacing.sm + 2,
           paddingHorizontal: theme.spacing.lg,
           gap: theme.spacing.sm,
-          opacity: pressed ? 0.9 : 1,
+          opacity: isLoading ? 0.65 : pressed ? 0.9 : 1,
         },
       ]}>
       <View
@@ -56,9 +60,15 @@ export function GoogleButton({
           G
         </AppText>
       </View>
-      <AppText variant="button" color={isPrimary ? 'inverse' : 'primary'}>
-        {label}
-      </AppText>
+      {isLoading ? (
+        <ActivityIndicator
+          color={isPrimary ? theme.colors.text.inverse : theme.colors.accent.primary}
+        />
+      ) : (
+        <AppText variant="button" color={isPrimary ? 'inverse' : 'primary'}>
+          {label}
+        </AppText>
+      )}
     </Pressable>
   );
 }
