@@ -10,22 +10,22 @@ export function getProcessingStageCopy(stage: ProcessingStage): ProcessingStageC
     case 'uploading':
       return {title: 'Uploading Image...'};
     case 'reading':
-      return {title: 'Reading Ingredient List...'};
+      return {title: 'Reading Food Label...'};
     case 'nutrition':
-      return {title: 'Understanding Nutrition Facts...'};
+      return {title: 'Extracting Ingredients...'};
     case 'profile':
-      return {title: 'Checking Against Your Health Profile...'};
+      return {title: 'Analyzing with OpenAI...'};
     case 'recommendations':
       return {
-        title: 'Generating AI Recommendations...',
+        title: 'Generating Personalized Insights...',
         rotatingMessages: [
+          'Reasoning about your health goals…',
           'Comparing healthier alternatives…',
-          'Scoring ingredients against your goals…',
-          'Personalizing your insights…',
+          'Scoring ingredient risk…',
         ],
       };
     case 'finalizing':
     default:
-      return {title: 'Finalizing Report...'};
+      return {title: 'Preparing Your Health Report...'};
   }
 }

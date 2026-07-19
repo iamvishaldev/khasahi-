@@ -1,10 +1,11 @@
-import {getScanPhoto} from '@/services/ai/scanPhotoRegistry';
+import {getScanPhoto, registerScanPhoto} from '@/services/ai/scanPhotoRegistry';
 import {analyzeProductImage, OpenAIVisionAnalysis} from '@/services/ai/openaiVisionService';
 import {
-  Alternative,
-  Ingredient,
+  consumeAnalysisPromise,
+  registerAnalysisPromise,
+} from '@/services/ai/analysisResultRegistry';
+import {
   IngredientRisk,
-  Nutrition,
   NutritionFactId,
   ProductAnalysis,
   UserProfile,
@@ -82,93 +83,7 @@ function mapVisionAnalysisToProductAnalysis(
   };
 }
 
-/**
- * Mock flagship-report backend.
- *
- * `fetchProductAnalysis` is the single extension point: swap its body for
- * a real call — the OpenAI Responses API for the verdict/recommendation/
- * confidence, a Nutrition API and Barcode API for product + nutrition
- * facts, and the OCR result for ingredients — and ProductAnalysisScreen
- * plus every component it renders keeps working unchanged, since they
- * only depend on the `ProductAnalysis` shape below.
- */
-
-const MOCK_INGREDIENTS: Ingredient[] = [
-  {
-    id: 'sugar',
-    name: 'Sugar',
-    risk: 'high',
-    explanation:
-      'Added sugars may increase calorie intake and contribute to metabolic issues when consumed in excess.',
-    confidence: 95,
-  },
-  {
-    id: 'palm-oil',
-    name: 'Palm Oil',
-    risk: 'high',
-    explanation:
-      'High in saturated fat, which can raise cholesterol levels with frequent consumption.',
-    confidence: 90,
-  },
-  {
-    id: 'milk-solids',
-    name: 'Milk Solids',
-    risk: 'moderate',
-    explanation:
-      'A concentrated dairy ingredient that adds calories and saturated fat, though it is not a major concern on its own.',
-    confidence: 82,
-  },
-  {
-    id: 'cocoa-butter',
-    name: 'Cocoa Butter',
-    risk: 'low',
-    explanation:
-      'A natural fat from cocoa beans. Generally fine in moderation as part of a balanced diet.',
-    confidence: 88,
-  },
-  {
-    id: 'artificial-flavor',
-    name: 'Artificial Flavor',
-    risk: 'moderate',
-    explanation:
-      'Synthetic flavoring compounds. Considered safe in small amounts but flagged for shoppers who prefer minimally processed foods.',
-    confidence: 76,
-  },
-];
-
-const MOCK_NUTRITION: Nutrition[] = [
-  {id: 'calories', label: 'Calories', value: '534 kcal', icon: '🔥'},
-  {id: 'sugar', label: 'Sugar', value: '57g', icon: '🍬'},
-  {id: 'protein', label: 'Protein', value: '7g', icon: '💪'},
-  {id: 'fat', label: 'Fat', value: '30g', icon: '🥑'},
-  {id: 'sodium', label: 'Sodium', value: '120mg', icon: '🧂'},
-  {id: 'fiber', label: 'Fiber', value: '2g', icon: '🌾'},
-];
-
-const MOCK_ALTERNATIVES: Alternative[] = [
-  {
-    id: 'amul-dark-chocolate',
-    name: 'Amul Dark Chocolate',
-    healthScore: 88,
-    reason: 'Lower Sugar',
-  },
-  {
-    id: 'lindt-70',
-    name: 'Lindt 70%',
-    healthScore: 92,
-    reason: 'Higher Cocoa Content',
-  },
-];
-
-function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function buildRecommendationMessage(userProfile: UserProfile): string {
-  return `Due to your ${userProfile.lifestyleLabel} lifestyle and your goal to ${userProfile.goalLabel.toLowerCase()}, this product is not an ideal choice. Consider consuming it occasionally.`;
-}
-
-async function fetchRealProductAnalysis(
+async function runRealAnalysis(
   scanId: string,
   photoUri: string,
   userProfile: UserProfile,
@@ -178,50 +93,38 @@ async function fetchRealProductAnalysis(
   return mapVisionAnalysisToProductAnalysis(scanId, photoUri, userProfile, vision);
 }
 
+/**
+ * Kicks off the real OpenAI analysis immediately (called from the
+ * Processing screen, as soon as the photo is captured) so the AI
+ * Processing screen's stages track the actual API call instead of a
+ * disconnected fake timer. Analysis screen picks up the same promise via
+ * `fetchProductAnalysis` below — the API is only ever called once per scan.
+ */
+export function startProductAnalysis(
+  scanId: string,
+  photoUri: string,
+  userProfile: UserProfile,
+): Promise<ProductAnalysis> {
+  registerScanPhoto(scanId, photoUri);
+  const promise = runRealAnalysis(scanId, photoUri, userProfile);
+  registerAnalysisPromise(scanId, promise);
+  promise.catch(() => {}); // avoid an unhandled-rejection warning before it's consumed
+  return promise;
+}
+
 export async function fetchProductAnalysis(
   scanId: string,
   userProfile: UserProfile,
 ): Promise<ProductAnalysis> {
-  const photoUri = getScanPhoto(scanId);
-  if (photoUri) {
-    try {
-      return await fetchRealProductAnalysis(scanId, photoUri, userProfile);
-    } catch (error) {
-      console.warn('Falling back to mock analysis; OpenAI Vision call failed', error);
-    }
+  const inFlight = consumeAnalysisPromise(scanId);
+  if (inFlight) {
+    return inFlight;
   }
 
-  await delay(600);
+  const photoUri = getScanPhoto(scanId);
+  if (!photoUri) {
+    throw new Error('We could not find the scanned photo for this product.');
+  }
 
-  const scoreValue = 42;
-  const {band, label} = getHealthScoreBand(scoreValue);
-
-  return {
-    product: {
-      id: scanId,
-      name: 'Cadbury Dairy Milk',
-      brand: 'Cadbury',
-      category: 'Chocolate',
-      scanDate: new Date().toISOString(),
-    },
-    healthScore: {value: scoreValue, band, label},
-    verdict: {
-      headline: '⚠ High in Added Sugar',
-      body: 'This product contains high levels of added sugar and saturated fat. Frequent consumption may negatively impact your long-term health.',
-    },
-    confidence: {
-      percent: 98,
-      basedOn: [
-        'Ingredient List',
-        'Nutrition Facts',
-        'Product Category',
-        'Your Health Profile',
-      ],
-    },
-    userProfile,
-    recommendation: {message: buildRecommendationMessage(userProfile)},
-    ingredients: MOCK_INGREDIENTS,
-    nutrition: MOCK_NUTRITION,
-    alternatives: MOCK_ALTERNATIVES,
-  };
+  return runRealAnalysis(scanId, photoUri, userProfile);
 }

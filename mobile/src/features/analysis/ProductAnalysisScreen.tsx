@@ -3,6 +3,8 @@ import {ActivityIndicator, ScrollView, StyleSheet, View} from 'react-native';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AppText} from '@/components/typography/AppText';
+import {PrimaryButton} from '@/components/actions/PrimaryButton';
+import {Icon} from '@/components/icons/Icon';
 import {useAppTheme} from '@/theme/useAppTheme';
 import {AppStackParamList} from '@/types/navigation';
 import {ProductHero} from './components/ProductHero';
@@ -38,7 +40,7 @@ export function ProductAnalysisScreen(): React.JSX.Element {
   const theme = useAppTheme();
   const navigation = useNavigation<AnalysisNavigationProp>();
   const {params} = useRoute<AnalysisRouteProp>();
-  const {analysis, isLoading} = useProductAnalysis(params?.scanId);
+  const {analysis, isLoading, error, retry} = useProductAnalysis(params?.scanId);
   const [saved, setSaved] = useState(false);
 
   function openAIChat() {
@@ -49,10 +51,34 @@ export function ProductAnalysisScreen(): React.JSX.Element {
     openAIChat();
   }
 
-  if (isLoading || !analysis) {
+  if (isLoading) {
     return (
       <View style={[styles.loadingWrap, {backgroundColor: theme.colors.background.primary}]}>
         <ActivityIndicator color={theme.colors.accent.primary} />
+        <AppText variant="body" color="secondary" style={styles.loadingText}>
+          Analyzing with AI...
+        </AppText>
+      </View>
+    );
+  }
+
+  if (error || !analysis) {
+    return (
+      <View
+        style={[
+          styles.loadingWrap,
+          {backgroundColor: theme.colors.background.primary, padding: theme.spacing.xl},
+        ]}>
+        <Icon name="alert-triangle" size={40} color={theme.colors.feedback.danger} />
+        <AppText variant="heading" style={styles.errorTitle}>
+          AI analysis failed
+        </AppText>
+        <AppText variant="body" color="secondary" style={styles.errorBody}>
+          {error ?? 'Something went wrong while analyzing this product.'}
+        </AppText>
+        <View style={[styles.errorActions, {gap: theme.spacing.sm}]}>
+          <PrimaryButton label="Try Again" onPress={retry} />
+        </View>
       </View>
     );
   }
@@ -61,6 +87,13 @@ export function ProductAnalysisScreen(): React.JSX.Element {
     <ScrollView
       style={{backgroundColor: theme.colors.background.primary}}
       contentContainerStyle={[styles.content, {padding: theme.spacing.xl, gap: theme.spacing.lg}]}>
+      <View style={[styles.aiBadge, {gap: theme.spacing.xs}]}>
+        <Icon name="sparkles" size={14} color={theme.colors.accent.primary} />
+        <AppText variant="caption" color="secondary">
+          Powered by OpenAI Vision · Personalized for your goals
+        </AppText>
+      </View>
+
       <ProductHero product={analysis.product} />
 
       <HealthScoreCard healthScore={analysis.healthScore} />
@@ -140,6 +173,26 @@ export function ProductAnalysisScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   loadingWrap: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    marginTop: 12,
+  },
+  errorTitle: {
+    marginTop: 16,
+    textAlign: 'center',
+  },
+  errorBody: {
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  errorActions: {
+    marginTop: 24,
+    width: '100%',
+  },
+  aiBadge: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },

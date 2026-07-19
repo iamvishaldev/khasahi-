@@ -1,76 +1,60 @@
-import {registerScanPhoto} from '@/services/ai/scanPhotoRegistry';
 import {DetectedIngredient, NutritionFact, ProcessingResult} from '../types/processing.types';
 
 /**
- * Mock backend pipeline for the AI Processing screen.
- *
- * Each function below is a named extension point: swap its body for a real
- * call — image upload, OCR text extraction, a Barcode API lookup, a
- * Nutrition Database query, or the OpenAI Responses API for personalized
- * recommendations — and nothing in `useProcessingSequence` or the UI
- * components needs to change, since they only depend on these signatures.
+ * Cosmetic staged-reveal pipeline for the AI Processing screen. The real
+ * OpenAI analysis runs separately (kicked off in useProcessingSequence via
+ * startProductAnalysis) and is awaited during the final stage — these
+ * functions only drive the visual timeline and the chip-reveal animation
+ * using generic scan-process labels, never fake ingredient/nutrition data
+ * that could be mistaken for real analysis of this product.
  */
 
-const MOCK_INGREDIENTS: DetectedIngredient[] = [
-  {id: 'sugar', name: 'Sugar'},
-  {id: 'palm-oil', name: 'Palm Oil'},
-  {id: 'cocoa-butter', name: 'Cocoa Butter'},
-  {id: 'milk-solids', name: 'Milk Solids'},
-  {id: 'salt', name: 'Salt'},
-  {id: 'natural-flavor', name: 'Natural Flavor'},
-];
-
-const MOCK_NUTRITION: NutritionFact[] = [
-  {id: 'calories', label: 'Calories', value: '210 kcal'},
-  {id: 'sugar', label: 'Sugar', value: '18g'},
-  {id: 'protein', label: 'Protein', value: '3g'},
-  {id: 'fat', label: 'Fat', value: '11g'},
+const SCAN_STAGE_CHIPS: DetectedIngredient[] = [
+  {id: 'text', name: 'Text Detected'},
+  {id: 'label', name: 'Label Parsed'},
+  {id: 'ingredients', name: 'Ingredient List Found'},
+  {id: 'nutrition', name: 'Nutrition Panel Found'},
+  {id: 'brand', name: 'Brand Identified'},
+  {id: 'image', name: 'Image Enhanced'},
 ];
 
 export function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/** Extension point: real image upload to storage/backend. */
+export function generateScanId(): string {
+  return `scan-${Math.round(Math.random() * 1_000_000)}`;
+}
+
 export async function uploadImage(_photoUri: string): Promise<void> {
   await delay(1100);
 }
 
-/** Extension point: OCR text extraction (and/or Barcode API lookup). */
 export async function extractIngredients(): Promise<DetectedIngredient[]> {
   await delay(1500);
-  return MOCK_INGREDIENTS;
+  return SCAN_STAGE_CHIPS;
 }
 
-/** Extension point: Nutrition Database lookup. */
 export async function analyzeNutrition(): Promise<NutritionFact[]> {
   await delay(1000);
-  return MOCK_NUTRITION;
+  return [];
 }
 
-/** Extension point: cross-reference against the user's stored health profile. */
 export async function personalizeForProfile(): Promise<void> {
   await delay(1100);
 }
 
-/** Extension point: OpenAI Responses API call for tailored recommendations. */
+/** Cosmetic minimum for this stage — the real OpenAI call is awaited alongside it. */
 export async function generateRecommendations(): Promise<void> {
   await delay(1600);
 }
 
-/** Extension point: assemble + persist the final report server-side. */
 export async function finalizeReport(
+  scanId: string,
   photoUri: string,
   ingredients: DetectedIngredient[],
   nutrition: NutritionFact[],
 ): Promise<ProcessingResult> {
-  await delay(700);
-  const scanId = `scan-${Math.round(Math.random() * 1_000_000)}`;
-  registerScanPhoto(scanId, photoUri);
-  return {
-    scanId,
-    photoUri,
-    ingredients,
-    nutrition,
-  };
+  await delay(400);
+  return {scanId, photoUri, ingredients, nutrition};
 }

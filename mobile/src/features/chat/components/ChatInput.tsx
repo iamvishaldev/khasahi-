@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
+import {Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
 import {useAppTheme} from '@/theme/useAppTheme';
 
 type ChatInputProps = {
@@ -27,17 +27,6 @@ export function ChatInput({value, onChangeText, onSend, disabled}: ChatInputProp
           ...theme.shadows.card,
         },
       ]}>
-      <PlaceholderIconButton
-        glyph="📎"
-        accessibilityLabel="Attach an image"
-        onPress={() => Alert.alert('Image attachment', 'Coming soon in a future update.')}
-      />
-      <PlaceholderIconButton
-        glyph="🎙️"
-        accessibilityLabel="Voice input"
-        onPress={() => Alert.alert('Voice input', 'Coming soon in a future update.')}
-      />
-
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -72,46 +61,11 @@ export function ChatInput({value, onChangeText, onSend, disabled}: ChatInputProp
   );
 }
 
-function PlaceholderIconButton({
-  glyph,
-  accessibilityLabel,
-  onPress,
-}: {
-  glyph: string;
-  accessibilityLabel: string;
-  onPress: () => void;
-}): React.JSX.Element {
-  const theme = useAppTheme();
-
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={accessibilityLabel}
-      hitSlop={8}
-      onPress={onPress}
-      style={[
-        styles.iconButton,
-        {backgroundColor: theme.colors.surface.subtle, borderRadius: theme.radii.pill},
-      ]}>
-      <Text style={styles.iconGlyph}>{glyph}</Text>
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     borderWidth: 1,
-  },
-  iconButton: {
-    width: 36,
-    height: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  iconGlyph: {
-    fontSize: 16,
   },
   input: {
     flex: 1,

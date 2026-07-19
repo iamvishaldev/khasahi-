@@ -1,6 +1,6 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {AppText} from '@/components/typography/AppText';
+import {Icon, IconName} from '@/components/icons/Icon';
 import {useAppTheme} from '@/theme/useAppTheme';
 import {HomeScreen} from '@/features/home/screens/HomeScreen';
 import {HistoryScreen} from '@/features/history/screens/HistoryScreen';
@@ -9,10 +9,10 @@ import {AppTabParamList} from '@/types/navigation';
 
 const Tab = createBottomTabNavigator<AppTabParamList>();
 
-const TAB_ICONS: Record<keyof AppTabParamList, string> = {
-  Home: '🏠',
-  History: '🕘',
-  Profile: '👤',
+const TAB_ICONS: Record<keyof AppTabParamList, IconName> = {
+  Home: 'home',
+  History: 'clock',
+  Profile: 'user',
 };
 
 export function AppTabs(): React.JSX.Element {
@@ -28,10 +28,13 @@ export function AppTabs(): React.JSX.Element {
           backgroundColor: theme.colors.surface.primary,
           borderTopColor: theme.colors.border.subtle,
         },
-        tabBarIcon: ({color}) => (
-          <AppText style={{color, fontSize: 20}}>
-            {TAB_ICONS[route.name as keyof AppTabParamList]}
-          </AppText>
+        tabBarIcon: ({color, focused}) => (
+          <Icon
+            name={TAB_ICONS[route.name as keyof AppTabParamList]}
+            size={22}
+            color={color}
+            strokeWidth={focused ? 2.4 : 2}
+          />
         ),
       })}>
       <Tab.Screen name="Home" component={HomeScreen} />

@@ -28,15 +28,12 @@ export function ProcessingScreen(): React.JSX.Element {
   const healthProfile = useHealthProfileSummary();
 
   function handleFinished(result: ProcessingResult) {
-    // Extension point: once real analysis data exists, pass it through
-    // (e.g. via navigation params or a shared query cache) instead of just
-    // the scanId — ProductAnalysisScreen's contract is what would change,
-    // not this screen or its components.
     navigation.replace('Analysis', {scanId: result.scanId});
   }
 
   const {stage, ingredients, remainingSeconds, cancel} = useProcessingSequence({
     photoUri: params.photoUri,
+    userProfile: healthProfile,
     onFinished: handleFinished,
   });
 

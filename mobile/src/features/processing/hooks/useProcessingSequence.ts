@@ -1,10 +1,13 @@
 import {useEffect, useRef, useState} from 'react';
+import {startProductAnalysis} from '@/features/analysis/services/analysisDataService';
+import {UserProfile} from '@/features/analysis/types/analysis.types';
 import {
   analyzeNutrition,
   delay,
   extractIngredients,
   finalizeReport,
   generateRecommendations,
+  generateScanId,
   personalizeForProfile,
   uploadImage,
 } from './processingPipeline';
@@ -18,6 +21,7 @@ const INGREDIENT_REVEAL_HOLD_MS = 1300;
 
 type UseProcessingSequenceOptions = {
   photoUri: string;
+  userProfile: UserProfile;
   onFinished: (result: ProcessingResult) => void;
 };
 
@@ -29,15 +33,17 @@ type UseProcessingSequenceResult = {
 };
 
 /**
- * Owns the AI Processing screen's 6-stage timeline. It has no opinion on
- * how each stage is presented — that's the UI components' job — only on
- * sequencing the mock pipeline calls, surfacing their data as it arrives,
- * and reporting a rough remaining-time estimate. Swapping the mock pipeline
- * functions for real OCR/OpenAI/Barcode/Nutrition-DB calls requires no
- * change here beyond the import.
+ * Owns the AI Processing screen's 6-stage timeline. The real OpenAI vision
+ * analysis is kicked off immediately (in parallel with the visual stages,
+ * not after them) so the "AI is working" moment on screen corresponds to
+ * an actual in-flight API call — the final stage waits on that same
+ * promise before handing off, so screen duration reflects real latency.
+ * The Analysis screen picks up this exact result via the analysis result
+ * registry, so the API is only ever called once per scan.
  */
 export function useProcessingSequence({
   photoUri,
+  userProfile,
   onFinished,
 }: UseProcessingSequenceOptions): UseProcessingSequenceResult {
   const [stage, setStage] = useState<ProcessingStage>('uploading');
@@ -45,6 +51,11 @@ export function useProcessingSequence({
   const [remainingSeconds, setRemainingSeconds] = useState(TOTAL_ESTIMATE_SECONDS);
   const cancelledRef = useRef(false);
   const onFinishedRef = useRef(onFinished);
+  // useHealthProfileSummary() returns a new object every render — reading
+  // it via ref (instead of putting it in the effect's deps) keeps the
+  // pipeline effect below from restarting on every parent re-render.
+  const userProfileRef = useRef(userProfile);
+  userProfileRef.current = userProfile;
 
   useEffect(() => {
     onFinishedRef.current = onFinished;
@@ -59,6 +70,8 @@ export function useProcessingSequence({
 
   useEffect(() => {
     let isMounted = true;
+    const scanId = generateScanId();
+    const analysisPromise = startProductAnalysis(scanId, photoUri, userProfileRef.current);
 
     async function run() {
       await uploadImage(photoUri);
@@ -96,7 +109,15 @@ export function useProcessingSequence({
       }
 
       setStage('finalizing');
-      const result = await finalizeReport(photoUri, extractedIngredients, nutrition);
+      // Hold here until the real OpenAI call actually settles — if it
+      // finished earlier, this resolves immediately; if it's slower than
+      // the cosmetic minimum, the screen honestly waits for it.
+      await analysisPromise.catch(() => {});
+      if (!isMounted || cancelledRef.current) {
+        return;
+      }
+
+      const result = await finalizeReport(scanId, photoUri, extractedIngredients, nutrition);
       if (!isMounted || cancelledRef.current) {
         return;
       }
