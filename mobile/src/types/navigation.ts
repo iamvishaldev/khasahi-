@@ -12,12 +12,16 @@ export type AuthStackParamList = {
   ResetPassword: undefined;
 };
 
-export type AppStackParamList = {
+export type AppTabParamList = {
   Home: undefined;
+  History: undefined;
+  Profile: undefined;
+};
+
+export type AppStackParamList = {
+  Tabs: undefined;
   Scanner: {mode?: 'barcode' | 'ocr'} | undefined;
   Processing: {photoUri: string};
   Analysis: {scanId?: string} | undefined;
   Chat: {scanId?: string} | undefined;
-  History: undefined;
-  Profile: undefined;
 };

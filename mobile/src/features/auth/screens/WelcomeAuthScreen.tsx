@@ -5,7 +5,9 @@ import {Pressable, StyleSheet, View} from 'react-native';
 import {AppText} from '@/components/typography/AppText';
 import {ScreenContainer} from '@/components/layout/ScreenContainer';
 import {useAppTheme} from '@/theme/useAppTheme';
-import {signInWithGoogle} from '@/services/auth/googleAuth';
+// import {signInWithGoogle} from '@/services/auth/googleAuth'; // bypassed for demo, no backend
+import {useSessionStore} from '@/store/session.store';
+import {useAppStore} from '@/store/app.store';
 import {GoogleButton} from '../components/GoogleButton';
 import {ScanIllustration} from '../components/ScanIllustration';
 import {AuthStackParamList} from '@/types/navigation';
@@ -20,17 +22,21 @@ export function WelcomeAuthScreen(): React.JSX.Element {
   const navigation = useNavigation<WelcomeAuthNavigationProp>();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const setSession = useSessionStore(state => state.setSession);
+  const setHasCompletedOnboarding = useAppStore(state => state.setHasCompletedOnboarding);
 
   async function handleGoogleSignIn() {
+    // Bypassed for demo — no backend/OAuth wired up. Directly authenticate
+    // with a fake session instead of calling signInWithGoogle().
     setAuthError(null);
     setIsGoogleLoading(true);
-    try {
-      await signInWithGoogle();
-    } catch (error) {
-      setAuthError(error instanceof Error ? error.message : 'Google sign in failed.');
-    } finally {
-      setIsGoogleLoading(false);
-    }
+    setSession({
+      accessToken: 'demo-google-token',
+      refreshToken: 'demo-google-token',
+      user: {id: 'demo-google-user', email: 'demo@khasahi.ai'},
+    });
+    setHasCompletedOnboarding(true);
+    setIsGoogleLoading(false);
   }
 
   return (

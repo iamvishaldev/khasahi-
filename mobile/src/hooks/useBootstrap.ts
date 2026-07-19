@@ -3,6 +3,7 @@ import {Linking} from 'react-native';
 import {useSessionStore} from '@/store/session.store';
 import {supabase} from '@/services/supabase/client';
 import {completeGoogleSignIn} from '@/services/auth/googleAuth';
+import {isDemoModeEnabled} from '@/config/demoMode';
 
 export function useBootstrap(): void {
   const setSession = useSessionStore(state => state.setSession);
@@ -10,6 +11,13 @@ export function useBootstrap(): void {
   const setPasswordRecovery = useSessionStore(state => state.setPasswordRecovery);
 
   useEffect(() => {
+    if (isDemoModeEnabled) {
+      // Skip the real Supabase bootstrap entirely in demo mode — no
+      // network/session race can override RootNavigator's bypass.
+      setSessionLoaded();
+      return undefined;
+    }
+
     if (!supabase) {
       return undefined;
     }

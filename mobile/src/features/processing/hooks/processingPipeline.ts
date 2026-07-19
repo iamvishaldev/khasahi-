@@ -1,3 +1,4 @@
+import {registerScanPhoto} from '@/services/ai/scanPhotoRegistry';
 import {DetectedIngredient, NutritionFact, ProcessingResult} from '../types/processing.types';
 
 /**
@@ -64,8 +65,10 @@ export async function finalizeReport(
   nutrition: NutritionFact[],
 ): Promise<ProcessingResult> {
   await delay(700);
+  const scanId = `scan-${Math.round(Math.random() * 1_000_000)}`;
+  registerScanPhoto(scanId, photoUri);
   return {
-    scanId: `mock-${Math.round(Math.random() * 1_000_000)}`,
+    scanId,
     photoUri,
     ingredients,
     nutrition,

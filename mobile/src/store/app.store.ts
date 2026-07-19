@@ -1,6 +1,6 @@
 import {create} from 'zustand';
 import {createJSONStorage, persist} from 'zustand/middleware';
-import {mmkvStorage} from './persist/mmkvStorage';
+import {persistStorage} from './persist/asyncStorage';
 
 type AppStore = {
   hasCompletedOnboarding: boolean;
@@ -18,7 +18,7 @@ export const useAppStore = create<AppStore>()(
     }),
     {
       name: 'khasahi-app-state',
-      storage: createJSONStorage(() => mmkvStorage),
+      storage: createJSONStorage(() => persistStorage),
     },
   ),
 );

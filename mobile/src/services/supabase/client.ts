@@ -1,9 +1,9 @@
 import {createClient, SupabaseClient} from '@supabase/supabase-js';
 import {env} from '@/utils/env';
-import {storage} from '@/services/storage/mmkv';
+import {storage} from '@/services/storage/asyncStorage';
 
 const supabaseStorage = {
-  getItem: (key: string) => storage.getString(key) ?? null,
+  getItem: (key: string) => storage.getString(key),
   setItem: (key: string, value: string) => storage.set(key, value),
   removeItem: (key: string) => storage.delete(key),
 };

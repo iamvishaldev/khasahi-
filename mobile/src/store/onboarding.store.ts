@@ -1,7 +1,7 @@
 import {create} from 'zustand';
 import {createJSONStorage, persist} from 'zustand/middleware';
 import {LifestyleFieldAnswer, LifestyleProfileId} from '@shared/index';
-import {mmkvStorage} from './persist/mmkvStorage';
+import {persistStorage} from './persist/asyncStorage';
 
 export type OnboardingSubmissionStatus =
   | 'idle'
@@ -75,7 +75,7 @@ export const useOnboardingStore = create<OnboardingStore>()(
     }),
     {
       name: 'khasahi-onboarding-draft',
-      storage: createJSONStorage(() => mmkvStorage),
+      storage: createJSONStorage(() => persistStorage),
     },
   ),
 );
